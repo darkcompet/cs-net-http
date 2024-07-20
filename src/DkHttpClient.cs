@@ -1,6 +1,5 @@
 namespace Tool.Compet.Http;
 
-using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Tool.Compet.Core;
@@ -60,18 +59,16 @@ public partial class DkHttpClient {
 	public async Task<T> GetOrThrowAsync<T>(string url) where T : DkApiResponse {
 		// To check with larger range: !result.IsSuccessStatusCode
 		var response = await this.GetRawAsync(url);
-		if (response.StatusCode != HttpStatusCode.OK) {
-			// 	DkLogs.Warning(this, $"NG response ({result.StatusCode}) when Get, reason: {result.ReasonPhrase}");
 
-			return DkObjects.NewInstace<T>().AlsoDk(res => {
-				res.status = (int)response.StatusCode;
-				res.msg = response.ReasonPhrase;
-			});
+		// Read response if success
+		if (response.IsSuccessStatusCode) {
+			return (await response.Content.ReadFromJsonAsync<T>())!;
 		}
 
-		// Add `!` to tell compiler that body and result are non-null.
-		// Or use: return DkJsons.ToObj<T>(await result.Content.ReadAsStringAsync())!;
-		return (await response.Content.ReadFromJsonAsync<T>())!;
+		return DkObjects.NewInstace<T>().AlsoDk(res => {
+			res.status = (int)response.StatusCode;
+			res.msg = response.ReasonPhrase;
+		});
 	}
 
 	/// Sends a GET request, and just return json-decoded response for given type.
@@ -94,12 +91,13 @@ public partial class DkHttpClient {
 	public async Task<T?> GetForTypeOrThrowAsync<T>(string url) where T : class {
 		// To check with larger range: !result.IsSuccessStatusCode
 		var response = await this.GetRawAsync(url);
-		if (response.StatusCode != HttpStatusCode.OK) {
-			// 	DkLogs.Warning(this, $"NG response ({result.StatusCode}) when GetForType, reason: {result.ReasonPhrase}");
-			return null;
+
+		// Read response if success
+		if (response.IsSuccessStatusCode) {
+			return await response.Content.ReadFromJsonAsync<T>();
 		}
 
-		return await response.Content.ReadFromJsonAsync<T>();
+		return null;
 	}
 
 	/// Sends a GET request, and just response as string type.
@@ -119,8 +117,9 @@ public partial class DkHttpClient {
 	/// @return Nullable body in string.
 	public async Task<string?> GetForStringOrThrowAsync(string url) {
 		var response = await this.GetRawAsync(url);
-		if (response.StatusCode != HttpStatusCode.OK) {
-			// 	DkLogs.Warning(this, $"NG response ({result.StatusCode}) when GetForString, reason: {result.ReasonPhrase}");
+
+		// Read response if success
+		if (response.IsSuccessStatusCode) {
 		}
 
 		return await response.Content.ReadAsStringAsync();
@@ -157,17 +156,16 @@ public partial class DkHttpClient {
 		// // For ASP.NET environment:
 		// var response = await httpClient.PostAsJsonAsync(url, body);
 
-		// To check with larger range: !result.IsSuccessStatusCode
-		if (response.StatusCode != HttpStatusCode.OK) {
-			// 	DkLogs.Warning(this, $"NG response ({response.StatusCode}) when Post, reason: {response.ReasonPhrase}");
-
-			return DkObjects.NewInstace<T>().AlsoDk(res => {
-				res.status = (int)response.StatusCode;
-				res.msg = response.ReasonPhrase;
-			});
+		// Read response if success
+		if (response.IsSuccessStatusCode) {
+			return (await response.Content.ReadFromJsonAsync<T>())!;
 		}
 
-		return (await response.Content.ReadFromJsonAsync<T>())!;
+		// Just return status and reason for failed case
+		return DkObjects.NewInstace<T>().AlsoDk(res => {
+			res.status = (int)response.StatusCode;
+			res.msg = response.ReasonPhrase;
+		});
 	}
 
 	/// Sends a POST request, and return json-decoded response as given type.
