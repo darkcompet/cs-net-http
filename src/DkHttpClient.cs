@@ -2,10 +2,11 @@ namespace Tool.Compet.Http;
 
 using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using Tool.Compet.Core;
 using Tool.Compet.Json;
 
-public class DkHttpClient {
+public partial class DkHttpClient {
 	/// HttpClient is designed for concurrency, so we just use 1 instance of it on
 	/// multiple requests instead of making new instance per request.
 	public readonly HttpClient httpClient;
