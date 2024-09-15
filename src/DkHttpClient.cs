@@ -49,7 +49,7 @@ public partial class DkHttpClient {
 		catch (Exception e) {
 			// 	DkLogs.Warning(this, $"Error when GET ! error: {e.Message}");
 
-			return DkObjects.NewInstace<T>().AlsoDk(res => {
+			return DkObjects.NewInstace<T>().ThenDk(res => {
 				res.status = 0;
 				res.msg = e.Message;
 			});
@@ -65,7 +65,7 @@ public partial class DkHttpClient {
 			return (await response.Content.ReadFromJsonAsync<T>())!;
 		}
 
-		return DkObjects.NewInstace<T>().AlsoDk(res => {
+		return DkObjects.NewInstace<T>().ThenDk(res => {
 			res.status = (int)response.StatusCode;
 			res.msg = response.ReasonPhrase;
 		});
@@ -141,7 +141,7 @@ public partial class DkHttpClient {
 		catch (Exception e) {
 			// DkLogs.Warning(this, $"Error when Post ! error: {e.Message}");
 
-			return DkObjects.NewInstace<T>().AlsoDk(res => {
+			return DkObjects.NewInstace<T>().ThenDk(res => {
 				res.status = 0;
 				res.msg = e.Message;
 			});
@@ -162,7 +162,7 @@ public partial class DkHttpClient {
 		}
 
 		// Just return status and reason for failed case
-		return DkObjects.NewInstace<T>().AlsoDk(res => {
+		return DkObjects.NewInstace<T>().ThenDk(res => {
 			res.status = (int)response.StatusCode;
 			res.msg = response.ReasonPhrase;
 		});
