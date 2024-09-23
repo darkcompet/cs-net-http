@@ -2,15 +2,10 @@
 
 This provides Http request for dotnet.
 
-- Features
 
-	```bash
-	- Http request (GET, POST,...).
-	```
+## Dependencies
 
-- Dependencies
-
-	```bash
+```bash
 	# Tool.Compet.Json
 	https://github.com/darkcompet/csharp-net-json
 
@@ -19,14 +14,14 @@ This provides Http request for dotnet.
 
 	# Tool.Compet.Core
 	https://github.com/darkcompet/csharp-core
-	```
+```
 
 
-## How to install
+## Installation
 
 - Just include it into project by add as git-submodule.
 	
-	```bash
-	# Tool.Compet.Http
-	git submodule add https://github.com/darkcompet/csharp-net-http.git
-	```
+```bash
+	# Tool.Compet.Core
+	git submodule add https://github.com/darkcompet/cs-net-http.git
+```
